@@ -315,8 +315,7 @@
 						secure <code>https</code> scheme as its default. This specification requires the use
 							<code>https</code> when referencing Schema.org in the manifest.</p>
 
-					<p>In some cases, the context MAY be extended by additional, local information. For example, see <a
-							href="#language-and-dir-manifest"></a>. </p>
+					<p>In some cases, the context MAY be extended by additional, local information.</p>
 
 				</section>
 
@@ -1267,18 +1266,14 @@
 				<section id="language-and-dir">
 					<h4>Language and Base Direction</h4>
 
-					<p>Each textual property in the <a>Web Publication's</a>
-						<abbr title="information set"><a>infoset</a></abbr> (e.g., <a href="#title">title</a>, <a
-							href="#creators">creators</a>) is <a
-							href="https://w3c.github.io/string-meta/#dom-localizable"
-						>Localizable</a>&#160;[[string-meta]]. This means it is possible to assign:</p>
+					<p>
+						Each natural language property in the <a>Web Publication's</a> <abbr title="information set"><a>infoset</a></abbr> (e.g., <a href="#title">title</a>, <a href="#creators">creators</a>) is <a href="https://w3c.github.io/string-meta/#dom-localizable">Localizable</a>&#160;[[string-meta]]. This means it is possible to assign: 
+					</p>
 
 					<ul>
 						<li>the natural <dfn>language</dfn>;</li>
 						<li>the <dfn>base direction</dfn> (the display direction for the property).</li>
 					</ul>
-
-					<p class="issue" data-number="220"></p>
 					
 					<section id="language-and-dir-infoset">
 						<h5>Infoset Requirements</h5>
@@ -1293,9 +1288,17 @@
 							<li><code>rtl</code>: right-to-left;</li>
 						</ul>
 
-						<p>When specified, these properties are used as defaults for textual values in the <abbr
-								title="information set">infoset</abbr>, but they MAY be overridden by individual
-							properties.</p>
+						<p>
+							When specified, these properties are used as defaults for textual values in the <abbr title="information set">infoset</abbr>.
+						</p>
+
+						<p>
+							The language information MAY be overridden by individual values. When specifying bidirectional text for a natural language value, and the base direction of the text cannot be correctly identified by the first strong directional character of that text, the value should explicitly identify the default direction either by prefixing the value with an appropriate Unicode bidirectional control character.
+						</p>
+
+						<p>
+							User agents, when using Web Publication manifests that contain bidirectional text should identify the base direction of any given natural language value by either scanning the text for the first strong directional character not contained within a markup tag; or by utilizing directional markup where provided. Once the base direction has been identified, user agents must determine the appropriate rendering and display of natural language values, according to the Unicode Bidirectional Algorithm&nbsp[[!bidi]]. This may necessitate wrapping additional control characters or markup around the string prior to display, in order to apply the base direction. (See <a href="#bidi-examples"></a>.)
+						</p>
 
 						<p class="note">These features make it possible to add the title of a publication in different
 							languages, or repeat the creators’ names using different scripts.</p>
@@ -1335,40 +1338,42 @@
 						<section id="manifest-default-language-and-dir">
 							<h6>Default language and direction</h6>
 
-							<p>The <em>default</em> language and base direction for all textual information in the
-								manifest MUST be set by <em>extending</em> the context of the manifest to include the
-								right features.</p>
-
-							<p>To set the language, the context information MUST be <em>extended</em> by the <a
-									href="https://www.w3.org/TR/2014/REC-json-ld-20140116/#string-internationalization"
-										><code>@language</code> keyword</a> [[!json-ld]]: </p>
-
-							<pre class="example" title="Setting the default language to French">
-{
-    "@context"   : [
-        "https://schema.org",
-        "https://www.w3.org/ns/wp-context",
-        {
-            "@language" : "fr"
-        }
-    ],
-    &#8230;
-}
-</pre>
-
-							<p>The value of the language tag MUST be set to a language code as defined
-								in&#160;[[!bcp47]].</p>
-
-							<p>The value of the base direction MUST be "<code>ltr</code>" or "<code>rtl</code>", as
-								appropriate.</p>
-
-							<p class="issue" data-number="218"></p>
+							<table class="zebra">
+								<thead>
+									<tr>
+										<th>Term</th>
+										<th>Description</th>
+										<th>Required Value</th>
+										<th>[[!schema.org]] Mapping</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<code>defaultTextLanguage</code>
+										</td>
+										<td>Default language for natural language properties</td>
+										<td>language code as defined in&#160;[[!bcp47]]</td>
+										<td>(None)</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr>
+										<td>
+											<code>defaultTextDirection</code>
+										</td>
+										<td>Default language for natural language properties</td>
+										<td><code>ltr</code>, <code>rtl</code>, or <code>auto</code></td>
+										<td>(None)</td>
+									</tr>
+								</tbody>
+							</table>
 						</section>
 
 						<section id="manifest-specific-language-and-dir">
-							<h6>Item specific language and direction</h6>
+							<h6>Item specific language</h6>
 
-							<p> It is possible to set the language and base direction for any textual value in the
+							<p> It is possible to set the language for any textual value in the
 								manifest. This information MUST be set for each item separately using the <a
 									href="https://www.w3.org/TR/2014/REC-json-ld-20140116/#string-internationalization"
 										><code>@value</code> and <code>@language</code> keywords</a>&#160;[[!json-ld]]: </p>
@@ -1390,10 +1395,6 @@
 							<p>The value of the language tag MUST be set to a language code as defined in [[!bcp47]]. If
 								not set, the default value is the <a href="#language-and-dir-manifest">default value of
 									the manifest</a>.</p>
-
-							<p>The value of the base direction MUST be "<code>ltr</code>" or "<code>rtl</code>", as
-								appropriate.</p>
-
 							<p class="issue" data-number="219"></p>
 						</section>
 					</section>
@@ -3102,6 +3103,45 @@
 				<pre class="example" data-include="experiments/audiobook/flatland.json" data-include-format="text"></pre>
 			</section>
 		</section>
+
+		<section id="bidi-examples" class="appendix informative">
+			<h2>Examples for bidirectional texts</h2>
+
+	        <table class="zebra">
+	          <tbody>
+	            <tr>
+	              <th>Value</th>
+	              <th>Direction</th>
+	              <th>Method</th>
+	            </tr>
+	            <tr>
+	              <td><code>"פעילות הבינאום, <abbr title="World Wide Web Consortium">W3C</abbr>"</code></td>
+	              <td>Right-to-Left</td>
+	              <td>First strong directional character</td>
+	            </tr>
+	            <tr>
+	              <td>
+	                <code>
+	              "The document was titled, '\u2067פעילות הבינאום, <abbr title="World Wide Web Consortium">W3C</abbr>\u2069'"
+	            </code>
+	              </td>
+	              <td>Left-to-Right</td>
+	              <td>First strong directional character</td>
+	            </tr>
+	            <tr>
+	              <td><code>"\u200FHTML היא שפת סימון"</code></td>
+	              <td>Right-to-Left</td>
+	              <td>Bidi Control Character</td>
+	            </tr>
+	            <tr>
+	              <td><code>"\u200E'سلام' is hello in Persian."</code></td>
+	              <td>Left-to-Right</td>
+	              <td>Bidi Control Character</td>
+	            </tr>
+	          </tbody>
+	        </table>
+		</section>
+
 		<section id="app-lifecycle-diagrams" class="appendix informative">
 			<h2>Lifecycle diagrams</h2>
 
